@@ -148,16 +148,17 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 			+'<div class="caption">'
 			+'    <h3>'+element.objet+'</h3>'
 			+'	  <p>'+element.description+'</p>';
-			+'	  <p class="small">Ajouté par : '+element.user+'</p>';
 			if(element.lien){
-				html += '	  <p>Vu à '+element.lien.prix +'€ sur le site : <a href="'+element.lien.url+'">'+element.lien.site+'</a></p>'
+				html += '<p class="small">Ajouté par : '+element.user+'</p>';
+			}
+			if(element.lien){
+				html += '<p>Vu à '+element.lien.prix +'€ sur le site : <a href="'+element.lien.url+'">'+element.lien.site+'</a></p>'
 			}
 			html +='    <a href="#" class="btn btn-default" role="button">Offrir ce cadeau</a>'
 			+'</div>'
 		    +'</div>'
 			+"</div>";
-		return html;
-		//return '<li  class="list-group-item">'+element.objet+"</li>";
+		return html;		
 	}
 	
 	//on ready	
