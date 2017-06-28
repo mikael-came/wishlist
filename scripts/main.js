@@ -34,6 +34,9 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 		addWish(element);
 	}
 	
+	function handleReservation(){
+		alert("todo");
+	}
 	function saveloggedUser(userjson){
 			// get userName and sessionId from authenticate user response
 				var userObj = JSON.parse(userjson);
@@ -148,13 +151,22 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 			+'<div class="caption">'
 			+'    <h3>'+element.objet+'</h3>'
 			+'	  <p>'+element.description+'</p>';
-			if(element.lien){
+			
+			if(element.user){
 				html += '<p class="small">Ajouté par : '+element.user+'</p>';
 			}
-			if(element.lien){
-				html += '<p>Vu à '+element.lien.prix +'€ sur le site : <a href="'+element.lien.url+'">'+element.lien.site+'</a></p>'
+			
+			
+			if(element.reservation){
+				html +='<p class="small"> <img src="./images/check.png" class="img-rounded" alt="Cinque Terre" width="24" height="24"> ';
+				html +=' Reservé par : '+element.reservation.user+'</p> </p>';
+			}else{
+				if(element.lien){
+					html += '<p>Vu à '+element.lien.prix +'€ sur le site : <a href="'+element.lien.url+'">'+element.lien.site+'</a></p>';
+				}	
+				html +='    <a href="#" class="btn btn-default" role="button">Offrir ce cadeau</a>'
 			}
-			html +='    <a href="#" class="btn btn-default" role="button">Offrir ce cadeau</a>'
+			
 			+'</div>'
 		    +'</div>'
 			+"</div>";
@@ -164,8 +176,12 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 	//on ready	
 	$( document ).ready(function() {
 		refreshWishes();
-		
+		FB.getLoginStatus(function(response) {
+			console.log("non loggué a FB");
+		});	
 	});
+	
+	
 	
 	
 	

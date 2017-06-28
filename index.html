@@ -14,6 +14,36 @@
 		<meta charset="utf-8">
 	</head>	
 	<body style="padding-top: 50px;" >
+
+		<div id="fb-root"></div>
+		<script>
+		  window.fbAsyncInit = function() {
+			FB.init({
+			  appId      : '1895172767408331',
+			  cookie     : true,
+			  xfbml      : true,
+			  version    : 'v2.9'
+			});
+			FB.AppEvents.logPageView();   
+		  };
+
+		  (function(d, s, id){
+			 var js, fjs = d.getElementsByTagName(s)[0];
+			 if (d.getElementById(id)) {return;}
+			 js = d.createElement(s); js.id = id;
+			 js.src = "//connect.facebook.net/en_US/sdk.js";
+			 fjs.parentNode.insertBefore(js, fjs);
+		   }(document, 'script', 'facebook-jssdk'));
+		</script>
+			
+			
+	
+	
+	
+	
+	
+	
+	
 	<nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -96,14 +126,17 @@
 		</div>
 		
 		<div class="container">
+				
 			<div id="data-container" >
+	
 				<div id="wishlist" style="display:flex; flex-direction: row; flex-wrap:wrap"></div>		 
 				
 			</div>
 		</div>
 		
 		<div class="container">
-			<div id="formAjout" class="row">
+			<button data-toggle="collapse" data-target="#formAjout">+</button>
+			<div id="formAjout" class="row collapse" >
 				<div class="form-horizontal">
 					<h1>Enregistrer un nouvel élement : </h1><br>
 					<div class="form-group">
@@ -151,6 +184,12 @@
 		</div>
 		
 		<hr></hr>
+		<div
+				  class="fb-like"
+				  data-share="true"
+				  data-width="450"
+				  data-show-faces="true">
+		</div>
 		<footer><p>2017 - mikael.came@gmail.com</p></footer>
 		
 	</body>
