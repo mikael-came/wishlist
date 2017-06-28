@@ -46,6 +46,17 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 				sessionStorage.setItem('pseudo', name);
 				sessionStorage.setItem('sessionId', sId);
 	}
+	function syncFBConnection(response){
+		console.log('syncFBConnection');
+		if (response.status === 'connected') {
+		  // Logged into your app and Facebook.
+		  console.log("Connecter via FB");
+		  
+		} else {
+		  // The person is not logged into your app or we are unable to tell.
+		  alert("mercid de vous connecter pour accéder à la liste");
+		}
+	}
 	function login (usr,mdp){
 		var user  = new App42User();
 		user.authenticate(usr, mdp,{
@@ -158,7 +169,7 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 			
 			
 			if(element.reservation){
-				html +='<p class="small"> <img src="./images/check.png" class="img-rounded" alt="Cinque Terre" width="24" height="24"> ';
+				html +='<p class="small"> <img src="./images/check.png" class="img-rounded" alt="x" width="24" height="24"> ';
 				html +=' Reservé par : '+element.reservation.user+'</p> </p>';
 			}else{
 				if(element.lien){
@@ -177,9 +188,15 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 	$( document ).ready(function() {
 		refreshWishes();
 		FB.getLoginStatus(function(response) {
-			console.log("non loggué a FB");
+			console.log("non logué a FB");
 		});	
 	});
+	
+	function checkLoginState() {
+	  FB.getLoginStatus(function(response) {
+		syncFBConnection(response);
+	  });
+	}
 	
 	
 	

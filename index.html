@@ -70,7 +70,10 @@
 				  <div>
 					<input type="text" id="pseudo" name="pseudo" placeholder="pseudo">
 					<input type="password" id="pass" name="pass" placeholder="Password">
-					 
+
+   				    <div class="fb-login-button" data-max-rows="1" data-size="medium" data-button-type="continue_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false"></div>
+					
+					<fb:login-button scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button>
 					<button name="login" class="login loginmodal-submit" value="Login" onclick="handleLogin()">Login</button>
 					 
 				  </div>
@@ -122,7 +125,14 @@
 			<p>Normalement maman et papa m'attendent pour le 26 août prochain. Voici une petite liste pour ma naissance.
 				Je vous fais des bisous et vous dit à très bientôt.
 			</p>
+			
+			<div class="fb-like"
+			  data-share="true"
+			  data-width="450"
+			  data-show-faces="true">
+			</div>
 		  </div>
+		  
 		</div>
 		
 		<div class="container">
@@ -184,12 +194,7 @@
 		</div>
 		
 		<hr></hr>
-		<div
-				  class="fb-like"
-				  data-share="true"
-				  data-width="450"
-				  data-show-faces="true">
-		</div>
+	
 		<footer><p>2017 - mikael.came@gmail.com</p></footer>
 		
 	</body>
