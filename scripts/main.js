@@ -22,13 +22,15 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 	function handleAjoutElement(){
 		var element = {};
 		// bidding
-		element.imageUrl = "http://static.kiabi.com/images/lot-7-bavoirs-eponge-blancbleugris-bebe-garcon-fn517_1_zc1.jpg";
-		element.objet="objet";
-		element.description="description";
-		element.lien ={};
-		element.lien.url = "http://www.kiabi.com/lot-7-bavoirs-eponge-bebe-garcon_P343440C343439#&ns_mchannel=sem&ns_source=google&ns_campaign=pla&utm_medium=sem&utm_source=google&utm_campaign=pla";
-		element.lien.site ="Kiabi.com";
-		element.lien.prix = 10;
+		element.imageUrl = $("#formAjout #imageUrl").val();
+		element.objet=$("#formAjout #objet").val();
+		element.description=$("#formAjout #description").val();
+		element.lien =new Object();
+		element.lien.url = $("#formAjout #lien").val();
+		element.lien.site = $("#formAjout #site").val();
+		element.lien.prix = $("#formAjout #prix").val();
+		element.user = sessionStorage.getItem('pseudo');
+		element.sessionId = sessionStorage.getItem('sessionId');
 		addWish(element);
 	}
 	
@@ -140,7 +142,7 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 		if(element.imageUrl){
 			imagesrc = element.imageUrl;
 		}
-		var html='<div class="item col-xs-12  col-sm-6 col-md-4 ">'
+		var html='<div class="item col-xs-10 col-sm-6 col-md-4 ">'
 			+'<div class="thumbnail">'
 			+'<img src="'+imagesrc+'" alt="">'
 			+'<div class="caption">'
