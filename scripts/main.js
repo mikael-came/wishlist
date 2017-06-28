@@ -1,4 +1,4 @@
-
+﻿
 App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f5e",
 				 "db5f25fb1d4b6043a749e253d632919942b5cf83baa931ed9301e012da8c0d80");
 
@@ -126,7 +126,7 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 				var ul = $("#wishlist");
 				ul.html("");
 				$(documents).each(function(e){
-					var element = makeListeElementHtml(this);
+					var element = renderListeElementHtml(this);
 					ul.append(element);
 				});
 				$("#pleaseWaitDialog").modal('hide');
@@ -136,7 +136,7 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 		}
 	}
 	
-	function makeListeElementHtml(element){
+	function renderListeElementHtml(element){
 	
 		var imagesrc = './images/gift.png'
 		if(element.imageUrl){
@@ -148,8 +148,9 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 			+'<div class="caption">'
 			+'    <h3>'+element.objet+'</h3>'
 			+'	  <p>'+element.description+'</p>';
+			+'	  <p class="small">Ajouté par : '+element.user+'</p>';
 			if(element.lien){
-				html += '	  <p>Vu � '+element.lien.prix +'Euros chez <a href="'+element.lien.url+'">'+element.lien.site+'</a></p>'
+				html += '	  <p>Vu à '+element.lien.prix +'€ sur le site : <a href="'+element.lien.url+'">'+element.lien.site+'</a></p>'
 			}
 			html +='    <a href="#" class="btn btn-default" role="button">Offrir ce cadeau</a>'
 			+'</div>'
