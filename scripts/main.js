@@ -77,25 +77,22 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 	});
 	
 	function loadWishes(){
-		var session = sessionStorage.getItem('sessionId');
-		if(session){
-			var storageService  = new App42Storage();  
-			var dbName = "WISHLIST";
-			var collectionName = "collection";
-			return new Promise( function(resolve, reject) {
-					storageService.findAllDocuments(dbName, collectionName,{
-										success: function(object) {
-											var storageObj = JSON.parse(object);
-											var documents = storageObj.app42.response.storage.jsonDoc;
-											resolve(documents);
-										},
-										error: function(error) {
-											reject(error);
-										}
-					});	
-			});
-			
-		}
+		var storageService  = new App42Storage();  
+		var dbName = "WISHLIST";
+		var collectionName = "collection";
+		return new Promise( function(resolve, reject) {
+				storageService.findAllDocuments(dbName, collectionName,{
+									success: function(object) {
+										var storageObj = JSON.parse(object);
+										var documents = storageObj.app42.response.storage.jsonDoc;
+										resolve(documents);
+									},
+									error: function(error) {
+										reject(error);
+									}
+				});	
+		});
+	
 		
 	}
 	
@@ -120,17 +117,21 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 	}
 	
 	function refreshWishes(){
-		$("#pleaseWaitDialog").modal('show');
-		loadWishes().then(function(documents){
-			var ul = $("#wishlist");
-			ul.html("");
-			$(documents).each(function(e){
-				var element = makeListeElementHtml(this);
-				ul.append(element);
+		var session = sessionStorage.getItem('sessionId');
+		if(session){
+			$("#pleaseWaitDialog").modal('show');
+			loadWishes().then(function(documents){
+				var ul = $("#wishlist");
+				ul.html("");
+				$(documents).each(function(e){
+					var element = makeListeElementHtml(this);
+					ul.append(element);
+				});
+				$("#pleaseWaitDialog").modal('hide');
 			});
-			$("#pleaseWaitDialog").modal('hide');
-		});
-	
+		}else{
+			$("#login-modal").modal('show');
+		}
 	}
 	
 	function makeListeElementHtml(element){
@@ -159,6 +160,7 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 	//on ready	
 	$( document ).ready(function() {
 		refreshWishes();
+		
 	});
 	
 	
