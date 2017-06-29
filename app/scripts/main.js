@@ -27,7 +27,7 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 	function handleGotoLogin(){
 		$("#register-modal").modal('hide');
 		$("#login-modal").modal('show');
-		
+
 	}
 	function handleAjoutElement(){
 		var element = {};
@@ -334,7 +334,14 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 				}
 			}else{
 				if(element.lien){
-					html += '<p>Vu à '+element.lien.prix +'€ sur le site : <a href="'+element.lien.url+'">'+element.lien.site+'</a></p>';
+					if(!element.lien.site){
+						element.lien.site=site;
+					}
+					html += '<p>Vu ';
+					if(element.lien.prix){
+						html += 'à '+element.lien.prix +'€ ';
+					}
+					html += 'sur le site : <a href="'+element.lien.url+'">'+element.lien.site+'</a></p>';
 				}
 				html +='<a href="#" class="btn btn-default" role="button" onClick='
 					+ "'"
