@@ -24,6 +24,11 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 		$("#register-modal").modal('show');
 
 	}
+	function handleGotoLogin(){
+		$("#register-modal").modal('hide');
+		$("#login-modal").modal('show');
+		
+	}
 	function handleAjoutElement(){
 		var element = {};
 		// bidding
