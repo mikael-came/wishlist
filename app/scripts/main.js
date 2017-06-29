@@ -5,7 +5,12 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 	function handleLogin(){
 			var mail = $("#login-modal #mail").val();
 			var mdp = $("#login-modal #pass").val();
-			login(mail,mdp);
+			login(mail,mdp).then(function(){
+				$("#login-modal").modal('hide');
+				refreshWishes();
+			},function(error){
+				alert("Erreur de connexion."+error);
+			});
 			return false; // prevent further bubbling of event
 	}
 	function handleRegister(){
@@ -31,12 +36,42 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 		element.lien.prix = $("#formAjout #prix").val();
 		element.user = sessionStorage.getItem('pseudo');
 		element.sessionId = sessionStorage.getItem('sessionId');
-		addWish(element);
+		addWish(element).then(function(){refreshWishes();});
+	}
+	function handleReservation(){
+		alert("Merci de votre participation.", "Mike et Elo");
+		refreshWishes();
+	}
+	
+	function handleLogout(){
+		logout().then(function(){
+			refreshWishes();
+			$("#login-modal").modal('show');
+		},function(erreur) {
+			console.log(erreur); // Analyse de la pile d'appels
+			alert("erreur de logout");
+			refreshWishes();
+		});
 	}
 
-	function handleReservation(){
-		alert("todo");
+	function refreshWishes(){
+		var session = sessionStorage.getItem('sessionId');
+		if(session){
+			$("#pleaseWaitDialog").modal('show');
+			loadWishes().then(function(documents){
+				renderListeWishes(documents);
+				$("#pleaseWaitDialog").modal('hide');
+			},
+			function(error){
+				$("#pleaseWaitDialog").modal('hide');
+				alert("Une erreur de chargement à eu lieu.");
+				
+			});
+		}else{
+			$("#login-modal").modal('show');
+		}
 	}
+	
 	function saveloggedUser(userjson){
 			// get userName and sessionId from authenticate user response
 				var userObj = JSON.parse(userjson);
@@ -47,36 +82,53 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 				sessionStorage.setItem('sessionId', sId);
 	}
 
+	$("#login-register").click(function() {
+		$("#login-modal").modal('hide');
+		$("#register-modal").modal('show');
+	});
+
+
+	//---Services---------------------------------------------
 	function login (mail,mdp){
 		var userService  = new App42User();
 		var otherMetaHeaders = {"emailAuth":"true"};
 		userService.setOtherMetaHeaders(otherMetaHeaders);
-
-		userService.authenticate(mail, mdp,{
-			success: function(object) {
-				console.log("connected", object);
-				// get userName and sessionId from authenticate user response
-				saveloggedUser(object);
-				$("#login-modal").modal('hide');
-				refreshWishes();
-			},
-			error: function(err) {
-				// callback when user not found.
-				console.log("connected error ",err);
-			}
+		return new Promise( function(resolve, reject) {
+			userService.authenticate(mail, mdp,{
+				success: function(object) {
+					console.log("connected", object);
+					saveloggedUser(object);
+					resolve();
+					
+				},
+				error: function(err) {
+					// callback when user not found.
+					console.log("connected error ",err);
+					reject(JSON.parse(err).app42Fault.details);
+				}
+			});
 		});
 	}
-	function logout (sessionId){
+	
+	function logout(){
 		var sessionId = sessionStorage.getItem('sessionId');
 		if(sessionId){
 			var userService  = new App42User();
-			userService.logout(sessionId,{
-			    success: function(object)
-			    {
-			       $("#login-modal").modal('show');
-			    },
-			    error: function(error) {
-			    }
+			
+			return new Promise( function(resolve, reject) {
+				userService.logout(sessionId,{
+					success: function()
+					{
+					   console.log("logout success");
+					   sessionStorage.removeItem('sessionId');					  
+					   resolve();
+					},
+					error: function(error) {
+						sessionStorage.removeItem('sessionId');
+						console.log("logout error",error);
+						reject(error);
+					}
+				});
 			});
 		}
 	};
@@ -94,11 +146,6 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 				}
 			});
 	}
-
-	$("#login-register").click(function() {
-		$("#login-modal").modal('hide');
-		$("#register-modal").modal('show');
-	});
 
 	function loadWishes(){
 		var storageService  = new App42Storage();
@@ -125,39 +172,32 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 			var storageService  = new App42Storage();
 			var dbName = "WISHLIST";
 			var collectionName = "collection";
-
-			storageService.insertJSONDocument(dbName, collectionName, JSON.stringify(element),{
-								success: function(object) {
-									refreshWishes();
-								},
-								error: function(error) {
-									$("#pleaseWaitDialog").modal('hide');
-								}
-			});
-		}
-
-	}
-
-	function refreshWishes(){
-		var session = sessionStorage.getItem('sessionId');
-		if(session){
-			$("#pleaseWaitDialog").modal('show');
-			loadWishes().then(function(documents){
-				var ul = $("#wishlist");
-				ul.html("");
-				$(documents).each(function(e){
-					var element = renderListeElementHtml(this);
-					ul.append(element);
+			return new Promise( function(resolve, reject) {
+				storageService.insertJSONDocument(dbName, collectionName, JSON.stringify(element),{
+									success: function(object) {
+										resolve();										
+									},
+									error: function(error) {
+										$("#pleaseWaitDialog").modal('hide');
+									}
 				});
-				$("#pleaseWaitDialog").modal('hide');
 			});
-		}else{
-			$("#login-modal").modal('show');
 		}
+
 	}
 
-	function renderListeElementHtml(element){
-
+	//---renderer Component ---------------------------------
+	function renderListeWishes(liste){
+		var ul = $("#wishlist");
+		//clean
+		ul.html("");
+		//render
+		$(liste).each(function(e){
+			var element = renderElementHtml(this);
+			ul.append(element);
+		});
+	}
+	function renderElementHtml(element){
 		var imagesrc = './images/gift.png'
 		if(element.imageUrl){
 			imagesrc = element.imageUrl;
