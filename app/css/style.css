@@ -1,3 +1,6 @@
+body{
+	font-family: 'Josefin Slab', serif;
+}
 
 /****** Titres******/
 nav .navbar-brand {
@@ -24,6 +27,7 @@ nav .navbar-brand {
 
 	font-family: 'Josefin Slab', serif;
 }
+
 
 /******footer *****/
 footer{
