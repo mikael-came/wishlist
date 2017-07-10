@@ -7,6 +7,10 @@ nav .navbar-brand {
 	font-family: 'Amatic SC', cursive;
 }
 
+.jumbotron {
+	background-color: #ffefd6;	
+}
+
 .jumbotron .titre {
 	font-family: 'Amatic SC', cursive;
 }
