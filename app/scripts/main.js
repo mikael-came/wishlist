@@ -14,7 +14,7 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 			return false; // prevent further bubbling of event
 	}
 	function handleRegister(){
-			var mail = $("#register-modal #pseudo").val();
+			var mail = $("#register-modal #mail").val();
 			var mdp = $("#register-modal #pass").val();
 			var pseudo = $("#register-modal #pseudo").val();
 			createUser(mail, pseudo, mdp);
