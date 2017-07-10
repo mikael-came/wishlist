@@ -24,6 +24,11 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 		$("#register-modal").modal('show');
 
 	}
+	function handleGotoLogin(){
+		$("#register-modal").modal('hide');
+		$("#login-modal").modal('show');
+
+	}
 	function handleAjoutElement(){
 		var element = {};
 		// bidding
@@ -40,18 +45,27 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 	}
 	function handleReservation(wishId){
 		$("#pleaseWaitDialog").modal('show');
-		addReservation(wishId).then(function(){			
-			alert("Merci de votre participation.", "Mike et Elo");
-			$("#pleaseWaitDialog").modal('hide');
+		addReservation(wishId).then(function(){
 			refreshWishes();
-			
+
 		},function(erreur){
 			alert("erreur lors de l'enregistrement de la reservation"+ erreur);
 			$("#pleaseWaitDialog").modal('hide');
 
 		});
 	}
-	
+	function handleAnnulerReservation(wishId){
+		$("#pleaseWaitDialog").modal('show');
+		removeReservation(wishId).then(function(){
+			refreshWishes();
+
+		},function(erreur){
+			alert("erreur lors de l'enregistrement de la reservation"+ erreur);
+			$("#pleaseWaitDialog").modal('hide');
+
+		});
+	}
+
 	function handleLogout(){
 		logout().then(function(){
 			refreshWishes();
@@ -74,13 +88,13 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 			function(error){
 				$("#pleaseWaitDialog").modal('hide');
 				alert("Une erreur de chargement à eu lieu.");
-				
+
 			});
 		}else{
 			$("#login-modal").modal('show');
 		}
 	}
-	
+
 	function saveloggedUser(userjson){
 			// get userName and sessionId from authenticate user response
 				var userObj = JSON.parse(userjson);
@@ -91,7 +105,7 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 				sessionStorage.setItem('pseudo', name);
 				sessionStorage.setItem('sessionId', sId);
 				sessionStorage.setItem('email', email);
-				
+
 	}
 
 	$("#login-register").click(function() {
@@ -111,7 +125,7 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 					console.log("connected", object);
 					saveloggedUser(object);
 					resolve();
-					
+
 				},
 				error: function(err) {
 					// callback when user not found.
@@ -121,18 +135,18 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 			});
 		});
 	}
-	
+
 	function logout(){
 		var sessionId = sessionStorage.getItem('sessionId');
 		if(sessionId){
 			var userService  = new App42User();
-			
+
 			return new Promise( function(resolve, reject) {
 				userService.logout(sessionId,{
 					success: function()
 					{
 					   console.log("logout success");
-					   sessionStorage.removeItem('sessionId');					  
+					   sessionStorage.removeItem('sessionId');
 					   resolve();
 					},
 					error: function(error) {
@@ -185,10 +199,10 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 			var dbName = "WISHLIST";
 			var collectionName = "collection";
 			return new Promise( function(resolve, reject) {
-				var jsonDoc = {data :JSON.stringify(element) };
-				storageService.insertJSONDocument(dbName, collectionName,jsonDoc ,{
+				var jsonDoc = JSON.stringify(element);
+				storageService.insertJSONDocument(dbName, collectionName, jsonDoc ,{
 									success: function(object) {
-										resolve();										
+										resolve();
 									},
 									error: function(error) {
 										$("#pleaseWaitDialog").modal('hide');
@@ -205,26 +219,24 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 				var storageService  = new App42Storage();
 				var dbName = "WISHLIST";
 				var collectionName = "collection";
-				//recuperation du wish 
+				//recuperation du wish
 				//getWish(wishId).then(function(wishDocument){
 					//le wish existe bien :)
-					//if(wishDocument.data.reservation == undefined){
+					//if(wishDocument.reservation == undefined){
 						//ajout resa au document
 						var reservation = new Object();
 						reservation.user = sessionStorage.getItem('pseudo');
 						reservation.contact = sessionStorage.getItem('email');
 						reservation.userId = session;
-						
-						var key = new Object();
-						key.name="reservation_user";
-						key.type=reservation.user;
-						//var docId =wishDocument._id.$oid;
-						var newstorageService  = new App42Storage();  
-						newstorageService.addOrUpdateKeys(dbName,collectionName,wishId, key,
+
+						var keys = new Object();
+						keys.reservation = reservation;
+						var newstorageService  = new App42Storage();
+						newstorageService.addOrUpdateKeys(dbName, collectionName, wishId, keys,
 						{
 							success: function(object) {
 								console.log("ok");
-								resolve();										
+								resolve();
 							},
 							error: function(error) {
 								reject("Erreur lors de la mise à jour");
@@ -234,27 +246,48 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 					//else{
 					//	reject("l'élement est déjà réservé");
 					//}
-					
-					
+
+
 				//},function(error){
 					//reject("erreur lors de l'ajout de la resa :"+error);
 				//});
 			});
 		}
 	}
-	
+
+  function removeReservation(wishId){
+
+		return new Promise( function(resolve, reject) {
+			var storageService  = new App42Storage();
+			var dbName = "WISHLIST";
+			var collectionName = "collection";
+			var keys = new Object();
+			keys.reservation = {};
+			storageService.addOrUpdateKeys(dbName, collectionName, wishId, keys,
+			{
+				success: function(object) {
+					console.log("ok");
+					resolve();
+				},
+				error: function(error) {
+					reject("Erreur lors de la mise à jour");
+				}
+			});
+
+		});
+	}
 	function getWish(wishid){
 		var storageService  = new App42Storage();
 		var dbName = "WISHLIST";
 		var collectionName = "collection";
 		return new Promise( function(resolve, reject) {
-			storageService.findDocumentById(dbName, collectionName, wishid,{    
-				success: function(object)   
-				{    
+			storageService.findDocumentById(dbName, collectionName, wishid,{
+				success: function(object)
+				{
 					var jsonDoc = JSON.parse(object).app42.response.storage.jsonDoc;
 					resolve(jsonDoc);
-				},    
-				error: function(error) {    
+				},
+				error: function(error) {
 					reject(error);
 				}
 			});
@@ -273,34 +306,47 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 		});
 	}
 	function renderElementHtml(element){
-		var data = element.data;
+
 		var imagesrc = './images/gift.png'
-		if(data.imageUrl){
-			imagesrc = data.imageUrl;
+		if(element.imageUrl){
+			imagesrc = element.imageUrl;
 		}
 		var html='<div class="item col-xs-10 col-sm-6 col-md-4 ">'
 			+'<div class="thumbnail">'
 			+'<img src="'+imagesrc+'" alt="">'
 			+'<div class="caption">'
-			+'    <h3>'+data.objet+'</h3>'
-			+'	  <p>'+data.description+'</p>';
+			+'    <h3>'+element.objet+'</h3>'
+			+'	  <p>'+element.description+'</p>';
 
-			if(data.user){
-				html += '<p class="small">Ajouté par : '+data.user+'</p>';
+			if(element.user){
+				html += '<p class="small">Ajouté par : '+element.user+'</p>';
 			}
 
 
-			if(data.reservation){
+			if(element.reservation && element.reservation.user){
+				html += '<p>Vu sur le site : <a href="'+element.lien.url+'">'+element.lien.site+'</a></p>';
 				html +='<p class="small"> <img src="./images/check.png" class="img-rounded" alt="x" width="24" height="24"> ';
-				html +=' Reservé par : '+data.reservation.user+'</p> </p>';
+				html +=' Reservé par : '+element.reservation.user+'</p> </p>';
+
+				if(sessionStorage.getItem('email') === element.reservation.contact){
+					html +='<a href="#" class="btn btn-default" role="button" onClick='
+						+ "'" + 'handleAnnulerReservation("'+element._id.$oid+'");'+ "'>Annuler</a>";
+				}
 			}else{
-				if(data.lien){
-					html += '<p>Vu à '+data.lien.prix +'€ sur le site : <a href="'+data.lien.url+'">'+data.lien.site+'</a></p>';
+				if(element.lien){
+					if(!element.lien.site){
+						element.lien.site=site;
+					}
+					html += '<p>Vu ';
+					if(element.lien.prix){
+						html += 'à '+element.lien.prix +'€ ';
+					}
+					html += 'sur le site : <a href="'+element.lien.url+'">'+element.lien.site+'</a></p>';
 				}
 				html +='<a href="#" class="btn btn-default" role="button" onClick='
 					+ "'"
 					+ 'handleReservation("'+element._id.$oid+'");'
-					+ "'>Offrir ce cadeau</a>"
+					+ "'>Offrir ce cadeau</a>";
 			}
 
 			+'</div>'
