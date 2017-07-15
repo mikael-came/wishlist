@@ -37,6 +37,7 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 		element.description=$("#formAjout #description").val();
 		element.lien = new Object();
 		element.lien.url = $("#formAjout #lien").val();
+		element.exemple = $("#formAjout #exemple").is(':checked');
 		element.lien.site = $("#formAjout #site").val();
 		element.lien.prix = $("#formAjout #prix").val();
 		element.user = sessionStorage.getItem('pseudo');
@@ -311,16 +312,18 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 		if(element.imageUrl){
 			imagesrc = element.imageUrl;
 		}
+		var type = 'Article souhaité :';
+		if(element.exemple === true){
+			type= "Exemple d'article :";
+		}
 		var html='<div class="item col-xs-10 col-sm-6 col-md-4 ">'
 			+'<div class="thumbnail">'
 			+'<img src="'+imagesrc+'" alt="">'
 			+'<div class="caption">'
 			+'    <h3>'+element.objet+'</h3>'
+			+'	  <p>'+type+'</p>'
 			+'	  <p>'+element.description+'</p>';
 
-			if(element.user){
-				html += '<p class="small">Ajouté par : '+element.user+'</p>';
-			}
 
 
 			if(element.reservation && element.reservation.user){
@@ -348,6 +351,10 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 					+ 'handleReservation("'+element._id.$oid+'");'
 					+ "'>Offrir ce cadeau</a>";
 			}
+			if(element.user){
+				html += '<div><p class="small">Ajouté par : '+element.user+'</p></div>';
+			}
+
 
 			+'</div>'
 		    +'</div>'

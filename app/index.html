@@ -10,8 +10,8 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		
-		<link href="https://fonts.googleapis.com/css?family=Amatic+SC:700|Josefin+Slab" rel="stylesheet"> 
+
+		<link href="https://fonts.googleapis.com/css?family=Amatic+SC:700|Josefin+Slab" rel="stylesheet">
 
 		<script src="./scripts/main.js"></script>
 		<title>Liste de naissance</title>
@@ -49,7 +49,7 @@
 
 
 	<nav class="navbar navbar-inverse navbar-fixed-top">
-      
+
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
@@ -64,7 +64,7 @@
 			<button data-toggle="modal" data-target="#register-modal" class="btn btn-success">S'inscrire</button>
 			<button  onClick="handleLogout()" class="btn btn-warning">Se déconnecter</button>
         </div><!--/.navbar-collapse -->
-     
+
     </nav>
 
 
@@ -123,7 +123,7 @@
 
 		<div class="jumbotron">
 		  <div class="container">
-			<h1 class="titre">Liste de naissance de Mikaël et Elodie </h1>
+			<h1 class="titre">Liste de naissance d'Élodie et Mikaël </h1>
 
 			<p>Hello ! Je suis le bébé Came - Ginez * <br>
 			Normalement maman et papa m'attendent pour le 26 août prochain et voici ma liste de naissance.</p>
@@ -180,7 +180,12 @@
 							<input type="url" id="imageUrl" name="imageUrl" placeholder="imageUrl">
 						</div>
 					</div>
-
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="exemple">Exemple:</label>
+            <div class="col-sm-10">
+              <input type="checkbox" id="exemple" name="exemple" placeholder="exemple">
+            </div>
+          </div>
 					<div class="form-group">
 						<label class="control-label col-sm-2" for="prix">Site:</label>
 						<div class="col-sm-10">
