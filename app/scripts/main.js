@@ -17,7 +17,7 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 			var mail = $("#register-modal #mail").val();
 			var mdp = $("#register-modal #pass").val();
 			var pseudo = $("#register-modal #pseudo").val();
-			createUser(mail, pseudo, mdp);
+			createUser(pseudo, mdp,mail);
 	}
 	function handleGotoRegister(){
 		$("#login-modal").modal('hide');
