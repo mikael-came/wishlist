@@ -17,7 +17,7 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 			var mail = $("#register-modal #mail").val();
 			var mdp = $("#register-modal #pass").val();
 			var pseudo = $("#register-modal #pseudo").val();
-			createUser(pseudo, mdp,mail);
+			createUser(mail, mdp, pseudo);
 	}
 	function handleGotoRegister(){
 		$("#login-modal").modal('hide');
@@ -307,60 +307,103 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 		});
 	}
 	function renderElementHtml(element){
-
-		var imagesrc = './images/gift.png'
-		if(element.imageUrl){
-			imagesrc = element.imageUrl;
-		}
 		var type = 'Article souhaité :';
 		if(element.exemple === true){
 			type= "Exemple d'article :";
 		}
+
 		var html='<div class="item col-xs-10 col-sm-6 col-md-4 ">'
-			+'<div class="thumbnail">'
-			+'<img src="'+imagesrc+'" alt="">'
-			+'<div class="caption">'
+							+'<div class="thumbnail">';
+
+		html += renderImage(element);
+
+		html+='<div class="caption">'
 			+'    <h3>'+element.objet+'</h3>'
 			+'	  <p>'+type+'</p>'
 			+'	  <p>'+element.description+'</p>';
 
 
+			var isReservationActif = (element.reservation && element.reservation.user);
 
-			if(element.reservation && element.reservation.user){
-				html += '<p>Vu sur le site : <a href="'+element.lien.url+'">'+element.lien.site+'</a></p>';
-				html +='<p class="small"> <img src="./images/check.png" class="img-rounded" alt="x" width="24" height="24"> ';
-				html +=' Reservé par : '+element.reservation.user+'</p> </p>';
+			// rendu Lien vers site
+			html += renderLien(element.lien, !isReservationActif);
+ 			html += renderBoutonReservation(element);
 
-				if(sessionStorage.getItem('email') === element.reservation.contact){
-					html +='<a href="#" class="btn btn-default" role="button" onClick='
-						+ "'" + 'handleAnnulerReservation("'+element._id.$oid+'");'+ "'>Annuler</a>";
-				}
-			}else{
-				if(element.lien){
-					if(!element.lien.site){
-						element.lien.site=site;
-					}
-					html += '<p>Vu ';
-					if(element.lien.prix){
-						html += 'à '+element.lien.prix +'€ ';
-					}
-					html += 'sur le site : <a href="'+element.lien.url+'">'+element.lien.site+'</a></p>';
-				}
-				html +='<a href="#" class="btn btn-default" role="button" onClick='
-					+ "'"
-					+ 'handleReservation("'+element._id.$oid+'");'
-					+ "'>Offrir ce cadeau</a>";
-			}
-			if(element.user){
-				html += '<div><p class="small">Ajouté par : '+element.user+'</p></div>';
-			}
+			html += renderUser(element.user);
 
 
+			//caption
 			+'</div>'
-		    +'</div>'
+			//thumbnail
+		  +'</div>'
+			//item
 			+"</div>";
 		return html;
 	}
+
+function renderBoutonReservation(element){
+	var html = "";
+	var isReservationActif = (element.reservation && element.reservation.user);
+	if(isReservationActif){
+					// Bouton reservation
+					html +='<p class="small"> <img src="./images/check.png" class="img-rounded" alt="x" width="24" height="24"> ';
+					html +=' Reservé par : '+element.reservation.user+'</p> </p>';
+
+					if(sessionStorage.getItem('email') === element.reservation.contact){
+						html +='<a href="#" class="btn btn-default" role="button" onClick='
+							+ "'" + 'handleAnnulerReservation("'+element._id.$oid+'");'+ "'>Annuler</a>";
+					}
+				}else{
+
+					// Bouton Ajout
+					html +='<a href="#" class="btn btn-default" role="button" onClick='
+						+ "'"
+						+ 'handleReservation("'+element._id.$oid+'");'
+						+ "'>Offrir ce cadeau</a>";
+				}
+
+	return html;
+}
+
+function renderLien(lien, afficherPrix){
+	var html = "";
+	//Lien URL
+	if(lien && lien.url){
+		//nom site par default
+		if(!lien.site){
+			lien.site = "site";
+		}
+
+		html += '<p>Vu ';
+		if(afficherPrix && lien.prix){
+			html += 'à '+lien.prix +'€ ';
+		}
+		html += 'sur le site : <a href="'+ lien.url+'">'+ lien.site +'</a></p>';
+	}
+
+	return html;
+}
+
+function renderImage(element){
+	var html = "";
+	//image par default
+	var imagesrc = './images/gift.png';
+	if(element.imageUrl){
+		imagesrc = element.imageUrl;
+	}
+
+	html+='<img src="'+imagesrc+'" alt="">';
+
+	return html;
+}
+
+function renderUser(user){
+	var html = "";
+	if(user){
+		html += '<div><p class="small">Ajouté par : '+ user +'</p></div>';
+	}
+	return html;
+}
 
 	//on ready
 	$( document ).ready(function() {
