@@ -213,6 +213,7 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 		}
 
 	}
+
 	function addReservation(wishId){
 		var session = sessionStorage.getItem('sessionId');
 		if(session){
@@ -306,61 +307,70 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 			ul.append(element);
 		});
 	}
+
 	function renderElementHtml(element){
-		var type = 'Article souhaité :';
-		if(element.exemple === true){
-			type= "Exemple d'article :";
-		}
+
 
 		var html='<div class="item col-xs-10 col-sm-6 col-md-4 ">'
-							+'<div class="thumbnail">';
+							+'	<div class="thumbnail">';
 
 		html += renderImage(element);
 
-		html+='<div class="caption">'
-			+'    <h3>'+element.objet+'</h3>'
-			+'	  <p>'+type+'</p>'
-			+'	  <p>'+element.description+'</p>';
+		html += '				<div class="caption">';
 
-
+			html += renderObjetDescription(element);
 			var isReservationActif = (element.reservation && element.reservation.user);
 
 			// rendu Lien vers site
 			html += renderLien(element.lien, !isReservationActif);
  			html += renderBoutonReservation(element);
-
 			html += renderUser(element.user);
 
 
-			//caption
-			+'</div>'
-			//thumbnail
-		  +'</div>'
-			//item
-			+"</div>";
+
+			html+='			</div>'
+				  +'	</div>'
+					+"</div>";
 		return html;
 	}
 
+function renderObjetDescription(element){
+	var html="";
+	// Libellé type par default
+	var type = 'Article souhaité :';
+	if(element.exemple === true){
+		type= "Exemple d'article :";
+	}
+
+	html += '   <h3>'+element.objet+'</h3>';
+	html += '	  <p>'+type+'</p>';
+	html +='	  <p>'+element.description+'</p>';
+
+	return html;
+}
+
 function renderBoutonReservation(element){
 	var html = "";
+
 	var isReservationActif = (element.reservation && element.reservation.user);
+
 	if(isReservationActif){
-					// Bouton reservation
-					html +='<p class="small"> <img src="./images/check.png" class="img-rounded" alt="x" width="24" height="24"> ';
-					html +=' Reservé par : '+element.reservation.user+'</p> </p>';
+				// Bouton reservation
+				html +='<p class="small"> <img src="./images/check.png" class="img-rounded" alt="x" width="24" height="24"> ';
+				html +=' Reservé par : '+element.reservation.user+'</p> </p>';
 
-					if(sessionStorage.getItem('email') === element.reservation.contact){
-						html +='<a href="#" class="btn btn-default" role="button" onClick='
-							+ "'" + 'handleAnnulerReservation("'+element._id.$oid+'");'+ "'>Annuler</a>";
-					}
-				}else{
-
-					// Bouton Ajout
+				if(sessionStorage.getItem('email') === element.reservation.contact){
 					html +='<a href="#" class="btn btn-default" role="button" onClick='
-						+ "'"
-						+ 'handleReservation("'+element._id.$oid+'");'
-						+ "'>Offrir ce cadeau</a>";
+						+ "'" + 'handleAnnulerReservation("'+element._id.$oid+'");'+ "'>Annuler</a>";
 				}
+	}else{
+			// Bouton Ajout
+ 			html +='<a href="#" class="btn btn-default" role="button" onClick='
+			+ "'"
+			+ 'handleReservation("'+element._id.$oid+'");'
+			+ "'>Offrir ce cadeau</a>";
+	}
+
 
 	return html;
 }
