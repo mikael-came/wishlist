@@ -51,18 +51,28 @@
 	<nav class="navbar navbar-inverse navbar-fixed-top">
 
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+            data-target="#navbar" aria-expanded="false" aria-controls="navbar">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
+
           <a class="navbar-brand" href="#">Liste de naissance</a>
         </div>
-        <div id="navbar" class="navbar-collapse collapse align-right">
-		    <button  data-toggle="modal" data-target="#login-modal" class="btn btn-success">Se connecter</button>
-			<button data-toggle="modal" data-target="#register-modal" class="btn btn-success">S'inscrire</button>
-			<button  onClick="handleLogout()" class="btn btn-warning">Se déconnecter</button>
+        <div id="navbar" class="navbar-collapse collapse navbar-right" style="padding-top:9px">
+
+            <button  data-toggle="modal" data-target="#login-modal" class="btn btn-success custom">
+              Se connecter</button>
+
+			      <button data-toggle="modal" data-target="#register-modal" class="btn btn-success custom">
+              S'inscrire</button>
+
+			      <button  onClick="handleLogout()" class="btn btn-warning custom">
+              Se déconnecter</button>
+
         </div><!--/.navbar-collapse -->
 
     </nav>

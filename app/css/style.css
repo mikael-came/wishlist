@@ -8,7 +8,7 @@ nav .navbar-brand {
 }
 
 .jumbotron {
-	background-color: #ffefd6;	
+	background-color: #ffefd6;
 }
 
 .jumbotron .titre {
@@ -20,7 +20,7 @@ nav .navbar-brand {
 }
 .jumbotron p small{
 	font-size: 11px;
-	
+
 }
 /****** panel ******/
 .item h3{
@@ -35,4 +35,8 @@ nav .navbar-brand {
 /******footer *****/
 footer{
 	font-family: 'Josefin Slab', serif;
+}
+
+.custom {
+    width: 120px;
 }
