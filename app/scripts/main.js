@@ -1,6 +1,6 @@
 ﻿
-App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f5e",
-				 "db5f25fb1d4b6043a749e253d632919942b5cf83baa931ed9301e012da8c0d80");
+App42.initialize("ecfcacfd89d195f867ba21a60ff183c8428b1e7b3b876e6692218175b976c67d",
+				 "71fa9c1fbc1cdef998f13284077596ef8fa6c7ba8f4d4d07541d38d0bafeff3d");
 
 	function handleLogin(){
 			var mail = $("#login-modal #mail").val();
