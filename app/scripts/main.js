@@ -87,6 +87,7 @@ var state = {
 		if(session){
 			$("#pleaseWaitDialog").modal('show');
 			loadWishes().then(function(documents){
+				state.wishes = documents;
 				renderListeWishes(documents);
 				$("#pleaseWaitDialog").modal('hide');
 			},
@@ -215,14 +216,25 @@ var state = {
 	}
 
 	function addReservation(wishId){
+		
+		var promises = [];
 		var session = sessionStorage.getItem('sessionId');
+		
+		var currentWish = state.wishes.find(function(element){
+												return wishId === element._id.$oid;
+											});
+		
+		if(currentWish && currentWish.multiple === true){
+			console.log("Duplication du wish");
+			var newWish = dupliquerWish(currentWish);
+			var promiseDuplication = addWish(newWish);
+			promises.push(promiseDuplication);
+		}
+	
 		if(session){
-			return new Promise( function(resolve, reject) {
+			var promiseReservation = new Promise( function(resolve, reject) {
 				var storageService  = new App42Storage();
-				//recuperation du wish
-				//getWish(wishId).then(function(wishDocument){
-					//le wish existe bien :)
-					//if(wishDocument.reservation == undefined){
+				
 						//ajout resa au document
 						var reservation = new Object();
 						reservation.user = sessionStorage.getItem('pseudo');
@@ -231,31 +243,25 @@ var state = {
 
 						var keys = new Object();
 						keys.reservation = reservation;
-						var newstorageService  = new App42Storage();
-						newstorageService.addOrUpdateKeys(dbName, collectionName, wishId, keys,
+						//var newstorageService  = new App42Storage();
+						storageService.addOrUpdateKeys(dbName, collectionName, wishId, keys,
 						{
 							success: function(object) {
 								console.log("ok");
 								resolve();
 							},
 							error: function(error) {
-								reject("Erreur lors de la mise à jour");
+								reject("huhu ca n'a pas marché. Merci d'essayer avec un navigateur plus récent(chrome).");
 							}
-						});
-					//}
-					//else{
-					//	reject("l'élement est déjà réservé");
-					//}
-
-
-				//},function(error){
-					//reject("erreur lors de l'ajout de la resa :"+error);
-				//});
+					
+						});				
 			});
+			promises.push(promiseReservation);
+			return Promise.all(promises);
 		}
 	}
 
-  function removeReservation(wishId){
+	function removeReservation(wishId){
 
 		return new Promise( function(resolve, reject) {
 			var storageService  = new App42Storage();
@@ -274,6 +280,7 @@ var state = {
 
 		});
 	}
+	
 	function getWish(wishid){
 		var storageService  = new App42Storage();
 		return new Promise( function(resolve, reject) {
@@ -289,7 +296,13 @@ var state = {
 			});
 		});
 	}
-
+	
+	function dupliquerWish(wishADupliquer){
+		var wish = Object.assign({}, wishADupliquer);
+		wish._id = undefined;
+		return wish;
+	}
+	
 	//---renderer Component ---------------------------------
 	function renderListeWishes(liste){
 		var ul = $("#wishlist");
