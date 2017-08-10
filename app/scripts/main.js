@@ -51,8 +51,9 @@ var state = {
 	function handleReservation(wishId){
 		$("#pleaseWaitDialog").modal('show');
 		addReservation(wishId).then(function(){
+			
 			refreshWishes();
-
+			
 		},function(erreur){
 			alert("erreur lors de l'enregistrement de la reservation"+ erreur);
 			$("#pleaseWaitDialog").modal('hide');
@@ -220,45 +221,51 @@ var state = {
 		var promises = [];
 		var session = sessionStorage.getItem('sessionId');
 		
-		var currentWish = state.wishes.find(function(element){
-												return wishId === element._id.$oid;
-											});
+		var reservation = new Object();
+		reservation.user = sessionStorage.getItem('pseudo');
+		reservation.contact = sessionStorage.getItem('email');
+		reservation.userId = session;
+						
+		var currentWish = state.wishes.find(function(element){return wishId === element._id.$oid;});
 		
 		if(currentWish && currentWish.multiple === true){
-			console.log("Duplication du wish");
+			console.log("Reservation d'un wish mulitple");
 			var newWish = dupliquerWish(currentWish);
-			var promiseDuplication = addWish(newWish);
+			newWish.reservation = reservation;
+			//ajout du voeux dupliqué avec la reservation
+			var promiseDuplication = new Promise( function(resolve, reject) {
+					addWish(newWish).then(function(){
+						alert("Cadeau Multiple : La reservation de cet élément a été enregistré sur une nouvelle vignette");
+						resolve();	
+					},function(erreur){
+						reject("huhu la reservation multiple n'a pas marché. Merci d'essayer avec un navigateur plus récent(chrome).");
+					});
+			});		
+			
 			promises.push(promiseDuplication);
-		}
-	
-		if(session){
+			
+		}else{			
+			console.log("Reservation d'un wish classique");
 			var promiseReservation = new Promise( function(resolve, reject) {
-				var storageService  = new App42Storage();
-				
-						//ajout resa au document
-						var reservation = new Object();
-						reservation.user = sessionStorage.getItem('pseudo');
-						reservation.contact = sessionStorage.getItem('email');
-						reservation.userId = session;
-
-						var keys = new Object();
-						keys.reservation = reservation;
-						//var newstorageService  = new App42Storage();
-						storageService.addOrUpdateKeys(dbName, collectionName, wishId, keys,
-						{
-							success: function(object) {
-								console.log("ok");
-								resolve();
-							},
-							error: function(error) {
-								reject("huhu ca n'a pas marché. Merci d'essayer avec un navigateur plus récent(chrome).");
-							}
-					
-						});				
+				var storageService  = new App42Storage();	
+				var keys = new Object();
+				keys.reservation = reservation;
+				storageService.addOrUpdateKeys(dbName, collectionName, wishId, keys,
+				{
+					success: function(object) {
+						console.log("ok");
+						resolve();
+					},
+					error: function(error) {
+						reject("huhu la reservation n'a pas marché. Merci d'essayer avec un navigateur plus récent(chrome).");
+					}
+			
+				});				
 			});
 			promises.push(promiseReservation);
-			return Promise.all(promises);
+			
 		}
+		return Promise.all(promises);
 	}
 
 	function removeReservation(wishId){
@@ -341,80 +348,88 @@ var state = {
 		return html;
 	}
 
-function renderObjetDescription(element){
-	var html="";
-	// Libellé type par default
-	var type = 'Article souhaité :';
-	if(element.exemple === true){
-		type= "Exemple d'article :";
-	}
-
-	html += '   <h3>'+element.objet+'</h3>';
-	html += '	  <p>'+type+'</p>';
-	html +='	  <p>'+element.description+'</p>';
-
-	return html;
-}
-
-function renderBoutonReservation(element){
-	var html = "";
-
-	var isReservationActif = (element.reservation && element.reservation.user);
-
-	if(isReservationActif){
-				// Bouton reservation
-				html +='<p class="small"> <img src="./images/check.png" class="img-rounded" alt="x" width="24" height="24"> ';
-				html +=' Reservé par : '+element.reservation.user+'</p> </p>';
-
-				if(sessionStorage.getItem('email') === element.reservation.contact){
-					html +='<a href="#" class="btn btn-default" role="button" onClick='
-						+ "'" + 'handleAnnulerReservation("'+element._id.$oid+'");'+ "'>Annuler</a>";
-				}
-	}else{
-			// Bouton Ajout
- 			html +='<a href="#" class="btn btn-default" role="button" onClick='
-			+ "'"
-			+ 'handleReservation("'+element._id.$oid+'");'
-			+ "'>Offrir ce cadeau</a>";
-	}
-
-
-	return html;
-}
-
-function renderLien(lien, afficherPrix){
-	var html = "";
-	//Lien URL
-	if(lien && lien.url){
-		//nom site par default
-		if(!lien.site){
-			lien.site = "site";
+	function renderObjetDescription(element){
+		var html="";
+		// Libellé type par default
+		var type = 'Article souhaité :';
+		
+		if(element.exemple === true){
+			type= "Exemple d'article :";
+		}
+		if(element.multiple === true){
+			type= "Article Multiple :";
 		}
 
-		html += '<p>Vu ';
-		if(afficherPrix && lien.prix){
-			html += 'à '+lien.prix +'€ ';
+		html += '   <h3>'+element.objet+'</h3>';
+		html += '	  <p>'+type+'</p>';
+		html +='	  <p>'+element.description+'</p>';
+
+		return html;
+	}
+
+	function renderBoutonReservation(element){
+		var html = "";
+
+		var isReservationActif = (element.reservation && element.reservation.user);
+
+		if(isReservationActif){
+					// Bouton reservation
+					html +='<p class="small"> <img src="./images/check.png" class="img-rounded" alt="x" width="24" height="24"> ';
+					html +=' Reservé par : '+element.reservation.user+'</p> </p>';
+
+					if(sessionStorage.getItem('email') === element.reservation.contact && !element.multiple===true){
+						html +='<a href="#" class="btn btn-default" role="button" onClick='
+							+ "'" + 'handleAnnulerReservation("'+element._id.$oid+'");'+ "'>Annuler</a>";
+					}
+		}else{
+			var libelleBouton ='Offrir ce cadeau';
+			if(element.multiple === true){
+				libelleBouton= " +1";
+			}
+				// Bouton Ajout
+				html +='<a href="#" class="btn btn-default" role="button" onClick='
+				+ "'"
+				+ 'handleReservation("'+element._id.$oid+'");'
+				+ "'>"+libelleBouton+"</a>";
 		}
-		html += 'sur le site : <a href="'+ lien.url+'">'+ lien.site +'</a></p>';
+
+
+		return html;
 	}
 
-	return html;
-}
+	function renderLien(lien, afficherPrix){
+		var html = "";
+		//Lien URL
+		if(lien && lien.url){
+			//nom site par default
+			if(!lien.site){
+				lien.site = "site";
+			}
 
-function renderImage(element){
-	var html = "";
-	//image par default
-	var imagesrc = './images/gift.png';
-	if(element.imageUrl){
-		imagesrc = element.imageUrl;
+			html += '<p>Vu ';
+			if(afficherPrix && lien.prix){
+				html += 'à '+lien.prix +'€ ';
+			}
+			html += 'sur le site : <a href="'+ lien.url+'">'+ lien.site +'</a></p>';
+		}
+
+		return html;
 	}
 
-	html+='<img src="'+imagesrc+'" alt="">';
+	function renderImage(element){
+		var html = "";
+		//image par default
+		var imagesrc = './images/gift.png';
+		if(element.imageUrl){
+			imagesrc = element.imageUrl;
+		}
 
-	return html;
-}
+		html+='<img src="'+imagesrc+'" alt="">';
 
-function renderUser(user){
+		return html;
+	}
+
+	function renderUser(user){
 	var html = "";
 	if(user){
 		html += '<div><p class="small">Ajouté par : '+ user +'</p></div>';
