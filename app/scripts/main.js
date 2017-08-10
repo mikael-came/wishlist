@@ -1,6 +1,11 @@
 ﻿
 App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f5e",
 				 "db5f25fb1d4b6043a749e253d632919942b5cf83baa931ed9301e012da8c0d80");
+var dbName = "WISHLIST";
+var collectionName = "collection";
+var state = {
+				wishes:[]
+			};
 
 	function handleLogin(){
 			var mail = $("#login-modal #mail").val();
@@ -176,8 +181,6 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 
 	function loadWishes(){
 		var storageService  = new App42Storage();
-		var dbName = "WISHLIST";
-		var collectionName = "collection";
 		return new Promise( function(resolve, reject) {
 				storageService.findAllDocuments(dbName, collectionName,{
 									success: function(object) {
@@ -197,8 +200,6 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 		if(session){
 			$("#pleaseWaitDialog").modal('show');
 			var storageService  = new App42Storage();
-			var dbName = "WISHLIST";
-			var collectionName = "collection";
 			return new Promise( function(resolve, reject) {
 				var jsonDoc = JSON.stringify(element);
 				storageService.insertJSONDocument(dbName, collectionName, jsonDoc ,{
@@ -219,8 +220,6 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 		if(session){
 			return new Promise( function(resolve, reject) {
 				var storageService  = new App42Storage();
-				var dbName = "WISHLIST";
-				var collectionName = "collection";
 				//recuperation du wish
 				//getWish(wishId).then(function(wishDocument){
 					//le wish existe bien :)
@@ -261,8 +260,6 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 
 		return new Promise( function(resolve, reject) {
 			var storageService  = new App42Storage();
-			var dbName = "WISHLIST";
-			var collectionName = "collection";
 			var keys = new Object();
 			keys.reservation = {};
 			storageService.addOrUpdateKeys(dbName, collectionName, wishId, keys,
@@ -280,8 +277,6 @@ App42.initialize("f744328c432328e97317402595ccce3ea9c8a2f0911d4811ac2288c6bf334f
 	}
 	function getWish(wishid){
 		var storageService  = new App42Storage();
-		var dbName = "WISHLIST";
-		var collectionName = "collection";
 		return new Promise( function(resolve, reject) {
 			storageService.findDocumentById(dbName, collectionName, wishid,{
 				success: function(object)
